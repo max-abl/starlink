@@ -1,7 +1,10 @@
 const fetch = require("node-fetch");
 const Headers = fetch.Headers;
+const uiid = require("uuid");
 
-// Récuperation du schéma en JSON de notre base sparql
+/**
+ * Récuperation du schéma en JSON de notre base sparql
+ */
 const getSchemaFromStarlink = async () => {
   var myHeaders = new fetch.Headers();
   myHeaders.append(
@@ -13,7 +16,8 @@ const getSchemaFromStarlink = async () => {
   var urlencoded = new URLSearchParams();
   urlencoded.append(
     "query",
-    "SELECT *\nWHERE\n{\n    GRAPH <https://www.esgi.fr/2019/ESGI5/IW1/projet2>\n    {\n        ?s ?p ?o\n    }\n}"
+    "PREFIX stlk:<https://starlink-data.herokuapp.com/vocabulary#> \n " + 
+    "SELECT ?o \n WHERE\n {\n GRAPH <https://www.esgi.fr/2019/ESGI5/IW1/projet2> \n {\n ?s stlk:keywords ?o \n } \n }"
   );
 
   var requestOptions = {
@@ -37,7 +41,11 @@ const getSchemaFromStarlink = async () => {
   }
 };
 
-// Récuperation de la donnée depuis WIKIDATA
+/**
+ * Récuperation de la donnée depuis Wikidata
+ *
+ * @param {*} paramName corresponds to a string name
+ */
 const getResultFromWikidata = async (paramName) => {
   var myHeaders = new fetch.Headers();
   myHeaders.append("Accept", "application/json");
@@ -74,7 +82,58 @@ const getResultFromWikidata = async (paramName) => {
   }
 };
 
+/**
+ * Envoie d'un triplet à la base sparql
+ *
+ * @param {*} keyword corresponds to a keyword to store
+ */
+const postTripletToStarlink = async (keyword) => {
+  const guid = uiid.v4();
+  console.log(guid);
+
+  var myHeaders = new fetch.Headers();
+  myHeaders.append(
+    "Authorization",
+    "Basic RVNHSS1XRUItMjAyMDpFU0dJLVdFQi0yMDIwLWhlVXE5Zg=="
+  );
+  myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+  var urlencoded = new URLSearchParams();
+  urlencoded.append(
+    "update",
+    "PREFIX guid:<https://starlink-data.herokuapp.com/id/guid> \n" +
+      "PREFIX stlk:<https://starlink-data.herokuapp.com/vocabulary#> \n" +
+      "INSERT DATA \n{ \n GRAPH <https://www.esgi.fr/2019/ESGI5/IW1/projet2> \n { \n " +
+      "guid:" +
+      guid +
+      " a stlk:Search ;" +
+      '    stlk:keywords "' +
+      keyword +
+      '"' +
+      " . \n } \n}"
+  );
+
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: urlencoded,
+    redirect: "follow",
+  };
+
+  try {
+    const response = await fetch(
+      "https://sandbox.bordercloud.com/sparql",
+      requestOptions
+    );
+    const data = response.text();
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 module.exports = {
   getSchemaFromStarlink,
   getResultFromWikidata,
+  postTripletToStarlink,
 };

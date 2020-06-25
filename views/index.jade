@@ -23,13 +23,14 @@ block content
           input.btn.btn-info(type="submit", value="Recherche")
 
 
-    h5.mb-3="Personnalités recemment recherchés"
-      if startList
-        h6="list"
+    h5.mb-3.mt-3="Personnalités recemment recherchés"
+      if keywords.length > 0
+        ul
+          each keyword in keywords
+            li.mt-3
+              a(href="/" + keyword.o.value)= keyword.o.value
+
       else
         div.alert.alert-info.mt-3
           span="Aucune personnalité recherché"
 
-
-
-      
