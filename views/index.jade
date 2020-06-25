@@ -1,4 +1,35 @@
 extends layout
 
 block content
-  h1= title
+
+  div.container
+    h1.mb-5= title
+
+    h5.mb-3= "Recherche d'une personnalité"
+
+    if error
+      div.alert.alert-danger
+        span=error
+
+    if info
+      div.alert.alert-info
+        span=info
+
+    form.mb-5(name="search", method="POST", autocomplete="off").mt-3
+        div.input
+            span.label Nom de la personnalité :
+            input.form-control(type="text", name="name", autocomplete="off")
+        div.actions.mt-3
+          input.btn.btn-info(type="submit", value="Recherche")
+
+
+    h5.mb-3="Personnalités recemment recherchés"
+      if startList
+        h6="list"
+      else
+        div.alert.alert-info.mt-3
+          span="Aucune personnalité recherché"
+
+
+
+      

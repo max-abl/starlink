@@ -1,0 +1,45 @@
+extends layout
+
+block content
+
+  div.container
+    h1= title
+
+    h5.mb-5="Resulat de la recherche"
+
+    if error
+        div.mb-3.alert.alert-danger.col
+            span=error
+
+    if info
+        div.mb-3.alert.alert-info
+            span=info
+
+
+
+    a(href="./")="< Retour"
+    if dataList
+        table.table.table-striped.table-bordered.mt-3
+            thead
+                tr
+                    th="Nom"
+                    th="Twitter"
+                    th="Follower"
+            tbody
+                each val in dataList
+                    tr
+                        td=val.itemLabel.value
+                        td
+                            a(target="_blank" href="http://twitter.com/" + val.t.value)= val.t.value
+                        td=val.follower ? val.follower.value : ["ND"]
+
+    else
+        table.table.table-striped.table-bordered.table-sm
+            thead
+                tr
+                    th="Nom"
+                    th="Twitter"
+                    th="Follower"
+            tbody
+                tr
+                    th.text-center(colspan="3")="Aucun resultat"
