@@ -17,7 +17,7 @@ const getSchemaFromStarlink = async () => {
   urlencoded.append(
     "query",
     "PREFIX stlk:<https://starlink-data.herokuapp.com/vocabulary#> \n " + 
-    "SELECT ?o \n WHERE\n {\n GRAPH <https://www.esgi.fr/2019/ESGI5/IW1/projet2> \n {\n ?s stlk:keywords ?o \n } \n }"
+    "SELECT DISTINCT ?o \n WHERE\n {\n GRAPH <https://www.esgi.fr/2019/ESGI5/IW1/projet2> \n {\n ?s stlk:keywords ?o \n } \n }"
   );
 
   var requestOptions = {
